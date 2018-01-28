@@ -1,0 +1,16 @@
+body{
+    background-color: gray;
+}
+.dv{
+    height: 500px;
+    width:500px;
+    background-image: url(../img/test.jpg);
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.top{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
