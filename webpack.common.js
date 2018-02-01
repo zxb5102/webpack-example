@@ -24,17 +24,36 @@ module.exports = {
   },
   module: {
     rules: [
-      {
-        test: /\.css$/,
-        use: ExtractTextPlugin.extract([
-          {
-            loader: "css-loader",
-            options: {
-              root: "../img"
-            }
-          }
-        ])
-      },
+      // {
+      //   test: /\.less$/,
+      //   use: ExtractTextPlugin.extract([
+      //     {
+      //       loader: "css-loader",
+      //       options: {
+      //         root: "../img",
+      //         sourceMap: true
+      //       }
+      //     },
+      //     {
+      //       loader: "less-loader",
+      //       options: {
+      //         sourceMap: true
+      //       }
+      //     }
+      //   ])
+      // },
+      // {
+      //   test: /\.css$/,
+      //   use: ExtractTextPlugin.extract([
+      //     {
+      //       loader: "css-loader",
+      //       options: {
+      //         root: "../img",
+      //         sourceMap: true
+      //       }
+      //     }
+      //   ])
+      // },
       {
         test: /\.html$/,
         use: [
