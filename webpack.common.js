@@ -3,20 +3,24 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const CleanWebpackPlugin = require("clean-webpack-plugin");
 const webpack = require("webpack");
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
+const CopyWebpackPlugin = require("copy-webpack-plugin");
 
 module.exports = {
-  entry: {
-    app: "./src/index.js"
-  },
+  entry: ["babel-polyfill", "./src/index.js"],
   plugins: [
-    new CleanWebpackPlugin(["dist"]),
+    new CleanWebpackPlugin(["dist/*"],{
+      //  exclude: [ 'styles.css' ],
+    }),
     new HtmlWebpackPlugin({
       template: "src/index.html"
     }),
-    // new webpack.ProvidePlugin({
-    //   $: ""
-    // }),
-    new ExtractTextPlugin("styles.css")
+    new CopyWebpackPlugin([
+      {
+        from: path.resolve(__dirname, "./src/others"),
+        to: path.resolve(__dirname, "dist/others"),
+        ignore: [".*"]
+      }
+    ])
   ],
   output: {
     filename: "bundle.js",
@@ -24,36 +28,6 @@ module.exports = {
   },
   module: {
     rules: [
-      // {
-      //   test: /\.less$/,
-      //   use: ExtractTextPlugin.extract([
-      //     {
-      //       loader: "css-loader",
-      //       options: {
-      //         root: "../img",
-      //         sourceMap: true
-      //       }
-      //     },
-      //     {
-      //       loader: "less-loader",
-      //       options: {
-      //         sourceMap: true
-      //       }
-      //     }
-      //   ])
-      // },
-      // {
-      //   test: /\.css$/,
-      //   use: ExtractTextPlugin.extract([
-      //     {
-      //       loader: "css-loader",
-      //       options: {
-      //         root: "../img",
-      //         sourceMap: true
-      //       }
-      //     }
-      //   ])
-      // },
       {
         test: /\.html$/,
         use: [

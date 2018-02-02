@@ -10,13 +10,27 @@ module.exports = merge(common, {
   },
   devtool: "inline-source-map",
   devServer: {
-    contentBase: "./dist"
+    port: 3000,
+    host: "0.0.0.0",
+    contentBase: "./dist",
+    allowedHosts: [//配置白名单
+      // 'test.com',
+    ]
   },
-  plugins:[
-    new ExtractTextPlugin("styles.css")
-  ],
-  module:{
-    rules:[
+  plugins: [new ExtractTextPlugin("styles.css")],
+  module: {
+    rules: [
+      {
+        test: /\.js$/,
+        exclude: /(node_modules|bower_components)/,
+        use: {
+          loader: "babel-loader",
+          options: {
+            sourceMaps:true,
+            presets: ["es2015"]
+          }
+        }
+      },
       {
         test: /\.less$/,
         use: ExtractTextPlugin.extract([
@@ -28,9 +42,10 @@ module.exports = merge(common, {
             }
           },
           {
-            loader:"postcss-loader",
-            options:{
-              sourceMap:true,
+            loader: "postcss-loader",
+            options: {
+              sourceMap: true,
+              plugins: [require("postcss-cssnext")()]
             }
           },
           {
@@ -52,11 +67,12 @@ module.exports = merge(common, {
             }
           },
           {
-            loader:"postcss-loader",
-            options:{
-              sourceMap:true,
+            loader: "postcss-loader",
+            options: {
+              sourceMap: true,
+              plugins: [require("postcss-cssnext")()]
             }
-          },
+          }
         ])
       }
     ]

@@ -28,4 +28,6 @@ a {
 /* :local(.test) { background: red; }
 :local .test{ color: green; } */
 
-
+.tran{
+  transform: translate(-50%,0);
+}
