@@ -1,3 +1,5 @@
+var path = require('path');
+var glob = require('glob');
 const merge = require("webpack-merge");
 const webpack = require("webpack");
 const UglifyJSPlugin = require("uglifyjs-webpack-plugin");
@@ -8,13 +10,39 @@ const OptimizeCSSPlugin = require("optimize-css-assets-webpack-plugin");
 
 // process.env.NODE_ENV = 'production'
 
+const entrys = getEntry('src/*.js');
+entrys["Polyfill"] = "babel-polyfill";
+
+const myPlugins = [
+  new ExtractTextPlugin("styles.css"),
+  new UglifyJSPlugin(),
+  new OptimizeCSSPlugin({
+    cssProcessorOptions: {
+      safe: true
+    }
+  }),
+  new webpack.optimize.CommonsChunkPlugin({
+    name: "commons",
+    filename: "[name].bundle.js",
+    minChunks: 3
+    /*
+      指定最少需要被多个个chunk 引用才算是一个公共的模块 这里配置的至少要 3个页面引用 才行 当前就3个页面引用
+      测试 改为4 的时候没有提取出公共的文件来 
+    */
+    //site: https://doc.webpack-china.org/plugins/commons-chunk-plugin 详细说明
+  })
+  // new webpack.DefinePlugin({
+  //   "process.env.NODE_ENV": JSON.stringify("production")
+  // }),
+];
 module.exports = merge(common, {
-  entry: {
-    Polyfill: "babel-polyfill",
-    index: "./src/index.js",
-    home: "./src/home.js",
-    login: "./src/login.js"
-  },
+  entry: entrys,
+  // entry: {
+  //   Polyfill: "babel-polyfill",
+  //   index: "./src/index.js",
+  //   home: "./src/home.js",
+  //   login: "./src/login.js"
+  // },
   output: {
     publicPath: "./"
   },
@@ -91,62 +119,60 @@ module.exports = merge(common, {
       }
     ]
   },
-  plugins: [
-    new HtmlWebpackPlugin({ //根据模板插入css/js等生成最终HTML
-      // favicon: './src/img/favicon.ico', //favicon路径，通过webpack引入同时可以生成hash值
-      filename: './index.html', //生成的html存放路径，相对于path
-      template: './src/index.html', //html模板路径
-      // inject: 'body', //js插入的位置，true/'head'/'body'/false
-      // hash: true, //为静态资源生成hash值
-      chunks: ['Polyfill', 'index','commons'],//需要引入的chunk，不配置就会引入所有页面的资源
-      // minify: { //压缩HTML文件    
-      //     removeComments: true, //移除HTML中的注释
-      //     collapseWhitespace: false //删除空白符与换行符
-      // }
-  }),
-    new HtmlWebpackPlugin({ //根据模板插入css/js等生成最终HTML
-      // favicon: './src/img/favicon.ico', //favicon路径，通过webpack引入同时可以生成hash值
-      filename: './login.html', //生成的html存放路径，相对于path
-      template: './src/login.html', //html模板路径
-      // inject: 'body', //js插入的位置，true/'head'/'body'/false
-      // hash: true, //为静态资源生成hash值
-      chunks: ['Polyfill', 'login','commons'],//需要引入的chunk，不配置就会引入所有页面的资源
-      // minify: { //压缩HTML文件    
-      //     removeComments: true, //移除HTML中的注释
-      //     collapseWhitespace: false //删除空白符与换行符
-      // }
-  }),
-    new HtmlWebpackPlugin({ //根据模板插入css/js等生成最终HTML
-      // favicon: './src/img/favicon.ico', //favicon路径，通过webpack引入同时可以生成hash值
-      filename: './home.html', //生成的html存放路径，相对于path
-      template: './src/home.html', //html模板路径
-      // inject: 'body', //js插入的位置，true/'head'/'body'/false
-      // hash: true, //为静态资源生成hash值
-      chunks: ['Polyfill', 'home','commons'],//需要引入的chunk，不配置就会引入所有页面的资源
-      // minify: { //压缩HTML文件    
-      //     removeComments: true, //移除HTML中的注释
-      //     collapseWhitespace: false //删除空白符与换行符
-      // }
-  }),
-    new ExtractTextPlugin("styles.css"),
-    new UglifyJSPlugin(),
-    new OptimizeCSSPlugin({
-      cssProcessorOptions: {
-        safe: true
-      }
-    }),
-    new webpack.optimize.CommonsChunkPlugin({
-      name: "commons",
-      filename:"[name].bundle.js",
-      minChunks: 3
-      /*
-        指定最少需要被多个个chunk 引用才算是一个公共的模块 这里配置的至少要 3个页面引用 才行 当前就3个页面引用
-        测试 改为4 的时候没有提取出公共的文件来 
-      */
-      //site: https://doc.webpack-china.org/plugins/commons-chunk-plugin 详细说明
-    })
-    // new webpack.DefinePlugin({
-    //   "process.env.NODE_ENV": JSON.stringify("production")
-    // }),
-  ]
+  plugins:myPlugins.concat(getPlugins())
+
 });
+/**
+ * 
+ * @param {*} globPath 传递一个应该匹配的js文件匹配表达式
+ * 返回示例 
+ * {
+ *    home :"./src/home.js",
+ *    login :"./src/login.js"
+ * }
+ */
+function getEntry(globPath) {
+  var files = glob.sync(globPath);
+  var entries = {},
+    entry,
+    dirname,
+    basename,
+    pathname,
+    extname;
+
+  for (var i = 0; i < files.length; i++) {
+    entry = files[i];
+    dirname = path.dirname(entry);
+    extname = path.extname(entry);
+    basename = path.basename(entry, extname);
+    // pathname = path.join(dirname, basename);
+    // pathname = pathDir ? pathname.replace(new RegExp('^' + pathDir), '') : pathname;
+    entries[basename] = "./" + entry;
+  }
+  return entries;
+}
+/**
+ * 返回 插件列表 用于生成  HTML 文件
+ */
+function getPlugins() {
+  const ary = [];
+  const entries = getEntry('src/*.js');
+  for (key in entries) {
+    ary.push(
+      new HtmlWebpackPlugin({
+        //根据模板插入css/js等生成最终HTML
+        // favicon: './src/img/favicon.ico', //favicon路径，通过webpack引入同时可以生成hash值
+        filename: "./"+key+".html", //生成的html存放路径，相对于path
+        template: "./src/"+key+".html", //html模板路径
+        // inject: 'body', //js插入的位置，true/'head'/'body'/false
+        // hash: true, //为静态资源生成hash值
+        chunks: ["Polyfill", key, "commons"] //需要引入的chunk，不配置就会引入所有页面的资源
+        // minify: { //压缩HTML文件
+        //     removeComments: true, //移除HTML中的注释
+        //     collapseWhitespace: false //删除空白符与换行符
+        // }
+      })
+    );
+  }
+  return ary;
+}
