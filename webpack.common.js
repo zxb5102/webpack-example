@@ -7,12 +7,13 @@ const CopyWebpackPlugin = require("copy-webpack-plugin");
 
 module.exports = {
   plugins: [
+
     new CleanWebpackPlugin(["dist/*"],{
       //  exclude: [ 'styles.css' ],
     }),
-    new HtmlWebpackPlugin({
-      template: "src/index.html"
-    }),
+    // new HtmlWebpackPlugin({
+    //   template: "src/index.html"
+    // }),
     new CopyWebpackPlugin([
       {
         from: path.resolve(__dirname, "./src/others"),

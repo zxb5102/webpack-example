@@ -3,6 +3,7 @@ const webpack = require("webpack");
 const UglifyJSPlugin = require("uglifyjs-webpack-plugin");
 const common = require("./webpack.common.js");
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
 const OptimizeCSSPlugin = require("optimize-css-assets-webpack-plugin");
 
 // process.env.NODE_ENV = 'production'
@@ -91,6 +92,42 @@ module.exports = merge(common, {
     ]
   },
   plugins: [
+    new HtmlWebpackPlugin({ //根据模板插入css/js等生成最终HTML
+      // favicon: './src/img/favicon.ico', //favicon路径，通过webpack引入同时可以生成hash值
+      filename: './index.html', //生成的html存放路径，相对于path
+      template: './src/index.html', //html模板路径
+      // inject: 'body', //js插入的位置，true/'head'/'body'/false
+      // hash: true, //为静态资源生成hash值
+      chunks: ['Polyfill', 'index','commons'],//需要引入的chunk，不配置就会引入所有页面的资源
+      // minify: { //压缩HTML文件    
+      //     removeComments: true, //移除HTML中的注释
+      //     collapseWhitespace: false //删除空白符与换行符
+      // }
+  }),
+    new HtmlWebpackPlugin({ //根据模板插入css/js等生成最终HTML
+      // favicon: './src/img/favicon.ico', //favicon路径，通过webpack引入同时可以生成hash值
+      filename: './login.html', //生成的html存放路径，相对于path
+      template: './src/login.html', //html模板路径
+      // inject: 'body', //js插入的位置，true/'head'/'body'/false
+      // hash: true, //为静态资源生成hash值
+      chunks: ['Polyfill', 'login','commons'],//需要引入的chunk，不配置就会引入所有页面的资源
+      // minify: { //压缩HTML文件    
+      //     removeComments: true, //移除HTML中的注释
+      //     collapseWhitespace: false //删除空白符与换行符
+      // }
+  }),
+    new HtmlWebpackPlugin({ //根据模板插入css/js等生成最终HTML
+      // favicon: './src/img/favicon.ico', //favicon路径，通过webpack引入同时可以生成hash值
+      filename: './home.html', //生成的html存放路径，相对于path
+      template: './src/home.html', //html模板路径
+      // inject: 'body', //js插入的位置，true/'head'/'body'/false
+      // hash: true, //为静态资源生成hash值
+      chunks: ['Polyfill', 'home','commons'],//需要引入的chunk，不配置就会引入所有页面的资源
+      // minify: { //压缩HTML文件    
+      //     removeComments: true, //移除HTML中的注释
+      //     collapseWhitespace: false //删除空白符与换行符
+      // }
+  }),
     new ExtractTextPlugin("styles.css"),
     new UglifyJSPlugin(),
     new OptimizeCSSPlugin({
