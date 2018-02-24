@@ -7,3 +7,6 @@ require("expose-loader?$!jquery");
 // var dv = document.createElement("div");
 // dv.className = localCss.test;
 // document.body.appendChild(dv);
+import {test} from "./js/shaking"
+
+console.log(test());
