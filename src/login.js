@@ -1,4 +1,4 @@
 import { util } from "./util/util";
-export function index(){
+export function login(){
     return util();
 }

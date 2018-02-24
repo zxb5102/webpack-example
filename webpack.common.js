@@ -6,7 +6,6 @@ const ExtractTextPlugin = require("extract-text-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 
 module.exports = {
-  entry: ["babel-polyfill", "./src/index.js"],
   plugins: [
     new CleanWebpackPlugin(["dist/*"],{
       //  exclude: [ 'styles.css' ],
@@ -22,8 +21,8 @@ module.exports = {
       }
     ])
   ],
-  output: {
-    filename: "bundle.js",
+  output: {//控制输出的总出口
+    filename: "[name].bundle.js",
     path: path.resolve(__dirname, "dist")
   },
   module: {

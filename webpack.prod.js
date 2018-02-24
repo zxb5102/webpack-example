@@ -8,6 +8,12 @@ const OptimizeCSSPlugin = require("optimize-css-assets-webpack-plugin");
 // process.env.NODE_ENV = 'production'
 
 module.exports = merge(common, {
+  entry: {
+    Polyfill: "babel-polyfill",
+    index: "./src/index.js",
+    home: "./src/home.js",
+    login: "./src/login.js"
+  },
   output: {
     publicPath: "./"
   },
@@ -91,6 +97,16 @@ module.exports = merge(common, {
       cssProcessorOptions: {
         safe: true
       }
+    }),
+    new webpack.optimize.CommonsChunkPlugin({
+      name: "commons",
+      filename:"[name].bundle.js",
+      minChunks: 3
+      /*
+        指定最少需要被多个个chunk 引用才算是一个公共的模块 这里配置的至少要 3个页面引用 才行 当前就3个页面引用
+        测试 改为4 的时候没有提取出公共的文件来 
+      */
+      //site: https://doc.webpack-china.org/plugins/commons-chunk-plugin 详细说明
     })
     // new webpack.DefinePlugin({
     //   "process.env.NODE_ENV": JSON.stringify("production")

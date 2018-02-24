@@ -5,6 +5,12 @@ const ExtractTextPlugin = require("extract-text-webpack-plugin");
 // process.env.NODE_ENV = 'development'
 
 module.exports = merge(common, {
+  entry: {
+    Polyfill: "babel-polyfill",
+    index: "./src/index.js",
+    home: "./src/home.js",
+    login: "./src/login.js"
+  },
   output: {
     publicPath: "/"
   },

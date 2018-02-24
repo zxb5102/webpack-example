@@ -1,3 +1,3 @@
-export function test(){
-    alert("hello zutil");
+export function util(){
+    return "util tool";
 }
